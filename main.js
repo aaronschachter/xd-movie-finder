@@ -1,4 +1,5 @@
 const { Rectangle } = require('scenegraph');
+const config = require('./config');
 
 let panel;
 let searchString;
@@ -8,7 +9,7 @@ let searchString;
  * @return String
  */
 function getApiUrl(path, query) {
-  const apiKey = 'API_KEY';
+  const apiKey = config.apiKey;
   const apiUrl = 'https://api.themoviedb.org/3/';
 
   let url = `${apiUrl}${path}?api_key=${apiKey}`;
