@@ -1,58 +1,20 @@
 const { Rectangle } = require('scenegraph');
-const config = require('./config');
+const tmdb = require('./lib/tmdb');
 
 let panel;
 let searchString;
 
-/**
- * @param String path
- * @return String
- */
-function getApiUrl(path, query) {
-  const apiKey = config.apiKey;
-  const apiUrl = 'https://api.themoviedb.org/3/';
-
-  let url = `${apiUrl}${path}?api_key=${apiKey}`;
-
-  if (query) {
-    url = `${url}&query=${query}`;
-  }
-
-  return url;
-}
-
-async function fetchSearchResults(text) {
-  const res = await fetch(getApiUrl('search/movie', text));
-
-  return await res.json();
-}
-
 async function searchMovies() {
-  console.log('searchMovies');
+  const results = await tmdb.searchMovies(document.querySelector("#movieTitleTextField").value);
 
-  const input = document.querySelector("#movieTitleTextField").value;
+  console.log(results);
 
-  if (!input) {
-    alert('Search string required');
-    return;
-  }
-
-  const data = await fetchSearchResults(input);
-
-  console.log(data);
-
-  panel.querySelector('#searchResults ul').innerHTML = data.results
+  panel.querySelector('#searchResults ul').innerHTML = results
     .map(item => `<li><a href="#">${item.title}</a><li>`)
     .join(''); 
 }
 
-function onTextChange() {
-  console.log('onTextChange');
-}
-
 function create() {
-  console.log('Creating Movie Finder panel');
-
   panel = document.createElement("div");
   panel.innerHTML = `
   <style>
@@ -77,11 +39,9 @@ function create() {
   <div id="movieFinderWarning">
     Please select a rectangle.
   </div>
-
   `;
 
   panel.querySelector('#searchForm').addEventListener('submit', searchMovies);
-//  panel.querySelector('#movieTitleTextField').addEventListener('oninput', onTextChange);
 
   return panel;
 }
